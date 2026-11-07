@@ -30,4 +30,14 @@ class PerawatController extends Controller
         $consultation->update(['status' => 'selesai']);
         return response()->json(['success' => true]);
     }
+        public function riwayat()
+    {
+        $riwayat = \App\Models\Consultation::with('user')
+            ->where('nurse_id', Auth::id())
+            ->where('status', 'selesai')
+            ->latest()
+            ->get();
+
+        return view('perawat.riwayat', compact('riwayat'));
+    }
 }

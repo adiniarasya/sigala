@@ -8,8 +8,23 @@
 
         <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm mb-6">
             <div class="bg-gradient-to-r from-blue-50 to-white p-8 flex items-center gap-6 border-b border-gray-100">
-                <div class="w-24 h-24 bg-sigala-blue rounded-full flex items-center justify-center text-white text-4xl font-extrabold shadow-lg shadow-blue-200 shrink-0">
-                    {{ substr(Auth::user()->name, 0, 1) }}
+                <div class="relative shrink-0 w-24 h-24">
+                    @if(Auth::user()->foto_profil)
+                        <img src="{{ Storage::url(Auth::user()->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover border-4 border-white shadow-lg">
+                    @else
+                        <div class="w-full h-full bg-sigala-blue rounded-full flex items-center justify-center text-white text-4xl font-extrabold shadow-lg shadow-blue-200">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                    @endif
+                    
+                    <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data" class="absolute bottom-0 right-0 translate-x-1 translate-y-1">
+                        @csrf
+                        @method('PATCH')
+                        <label for="foto_profil" class="cursor-pointer bg-white p-1.5 rounded-full shadow-md hover:bg-gray-100 transition border border-gray-100 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-sigala-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </label>
+                        <input type="file" id="foto_profil" name="foto_profil" class="hidden" onchange="this.form.submit()">
+                    </form>
                 </div>
                 <div>
                     <h2 class="text-2xl font-extrabold text-sigala-dark">{{ Auth::user()->name }}</h2>
@@ -23,74 +38,87 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
-                <h3 class="font-bold text-sigala-dark mb-4">Data Pribadi</h3>
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm" x-data="{ editAlamat: false }">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-sigala-dark">Data Pribadi</h3>
+                    <button @click="editAlamat = !editAlamat" class="text-xs font-bold text-sigala-blue hover:underline">
+                        <span x-show="!editAlamat">Edit Alamat</span>
+                        <span x-show="editAlamat">Batal</span>
+                    </button>
+                </div>
+                
                 <div class="space-y-4">
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">📅</span>
                         <div class="flex-1">
-                            <p class="text-xs text-gray-500">Tanggal Lahir</p>
-                            <p class="font-semibold text-sigala-dark">12 Januari 1969</p>
+                            <p class="text-xs text-gray-500">Usia</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->usia ?? 'Belum diisi' }} Tahun</p>
                         </div>
                     </div>
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">🚻</span>
                         <div class="flex-1">
                             <p class="text-xs text-gray-500">Jenis Kelamin</p>
-                            <p class="font-semibold text-sigala-dark">Laki-laki</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->gender ?? 'Belum diisi' }}</p>
                         </div>
                     </div>
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">📞</span>
                         <div class="flex-1">
-                            <p class="text-xs text-gray-500">Nomor Telepon</p>
-                            <p class="font-semibold text-sigala-dark">0812 4356 6688</p>
+                            <p class="text-xs text-gray-500">Nomor WhatsApp</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->whatsapp ?? 'Belum diisi' }}</p>
                         </div>
                     </div>
-                    <div class="flex items-center text-sm">
+                    <div class="flex items-start text-sm">
                         <span class="w-8 text-gray-400">📍</span>
                         <div class="flex-1">
                             <p class="text-xs text-gray-500">Alamat</p>
-                            <p class="font-semibold text-sigala-dark">Jl. Melati No.10, Jakarta Pusat</p>
+                            <p x-show="!editAlamat" class="font-semibold text-sigala-dark">{{ Auth::user()->alamat ?? 'Belum diisi' }}</p>
+                            
+                            <form x-show="editAlamat" action="{{ route('profil.update') }}" method="POST" class="mt-2">
+                                @csrf
+                                @method('PATCH')
+                                <textarea name="alamat" rows="2" class="w-full rounded-xl border-gray-200 focus:border-sigala-blue focus:ring focus:ring-sigala-blue/20 bg-gray-50 p-2 text-sm mb-2">{{ Auth::user()->alamat }}</textarea>
+                                <button type="submit" class="px-4 py-2 bg-sigala-blue text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition">Simpan</button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
-                <h3 class="font-bold text-sigala-dark mb-4">Informasi Kesehatan</h3>
+            <a href="{{ route('profil.kesehatan') }}" class="block bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-sigala-dark">Informasi Kesehatan</h3>
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </div>
                 <div class="space-y-4">
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">🩸</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Golongan Darah</p>
-                            <p class="font-semibold text-sigala-dark">O+</p>
-                        </div>
-                    </div>
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">⚖️</span>
                         <div class="flex-1">
                             <p class="text-xs text-gray-500">Berat & Tinggi</p>
-                            <p class="font-semibold text-sigala-dark">65 kg / 160 cm</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->berat ?? '-' }} kg / {{ Auth::user()->tinggi ?? '-' }} cm</p>
                         </div>
                     </div>
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">🤧</span>
                         <div class="flex-1">
                             <p class="text-xs text-gray-500">Alergi</p>
-                            <p class="font-semibold text-sigala-dark">Tidak ada</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->alergi ?? 'Tidak ada' }}</p>
                         </div>
                     </div>
                     <div class="flex items-center text-sm">
                         <span class="w-8 text-gray-400">🏥</span>
                         <div class="flex-1">
                             <p class="text-xs text-gray-500">Riwayat Penyakit</p>
-                            <p class="font-semibold text-sigala-dark">Tidak ada</p>
+                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->riwayat_penyakit ?? 'Tidak ada' }}</p>
                         </div>
                     </div>
                 </div>
-            </div>
-                    <div class="mt-6 bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+            </a>
+
+        </div>
+
+        <div class="mt-6 bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
             <h3 class="font-bold text-sigala-dark mb-4">Riwayat Cek Kondisi</h3>
             <div class="space-y-3">
                 @forelse($screenings as $screening)
@@ -107,7 +135,6 @@
                     <p class="text-sm text-gray-500 text-center py-4">Belum ada riwayat skrining.</p>
                 @endforelse
             </div>
-        </div>
         </div>
 
         <div class="mt-6 bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
@@ -126,7 +153,7 @@
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
                 
-                <a href="#" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
+                <a href="{{ route('profil.privasi') }}" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
@@ -139,7 +166,7 @@
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>
 
-                <a href="#" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
+                <a href="{{ route('profil.bantuan') }}" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>

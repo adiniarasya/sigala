@@ -9,5 +9,5 @@ class Disaster extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'slug', 'ikon', 'warna'];
+protected $fillable = ['nama', 'slug', 'ikon', 'warna', 'tips', 'video_url'];
 }

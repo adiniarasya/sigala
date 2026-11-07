@@ -19,6 +19,16 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
     $skorTerbaru = \App\Models\PreparednessScore::where('user_id', $user->id)->first();
+    
+    $gempaBmkg = app(\App\Http\Controllers\BmkgController::class)->getGempaTerkini();
+    
+    $peringatanLokal = null;
+    if ($user->alamat) {
+        $alamatUser = strtolower($user->alamat);
+        $peringatanLokal = \App\Models\EarlyWarning::whereRaw('LOWER(wilayah) LIKE ?', ['%' . $alamatUser . '%'])
+            ->latest()
+            ->first();
+    }
 
     if ($user->role === 'perawat') {
         $antrean = [
@@ -35,7 +45,7 @@ Route::get('/dashboard', function () {
         return view('dashboard-admin', compact('totalUser', 'totalPengguna', 'totalPerawat'));
     }
 
-    return view('dashboard', compact('skorTerbaru'));
+    return view('dashboard', compact('skorTerbaru', 'gempaBmkg', 'peringatanLokal'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -45,9 +55,21 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/profil', [ProfilController::class, 'index'])->middleware(['auth', 'verified'])->name('profil');
+Route::patch('/profil/update', [App\Http\Controllers\ProfilController::class, 'update'])->middleware(['auth'])->name('profil.update');
+Route::get('/profil/kesehatan', [App\Http\Controllers\ProfilController::class, 'kesehatan'])->middleware(['auth'])->name('profil.kesehatan');
+Route::patch('/profil/kesehatan/update', [App\Http\Controllers\ProfilController::class, 'updateKesehatan'])->middleware(['auth'])->name('profil.kesehatan.update');
+Route::get('/profil/bantuan', function () { return view('profil.bantuan'); })->middleware(['auth'])->name('profil.bantuan');
+Route::get('/profil/privasi', function () { return view('profil.privasi'); })->middleware(['auth'])->name('profil.privasi');
 
 Route::get('/edukasi', [EdukasiController::class, 'index'])->middleware(['auth', 'verified'])->name('edukasi.index');
+Route::get('/edukasi/bantuan-darurat', function () {
+    return view('edukasi.bantuan-darurat');
+})->middleware(['auth', 'verified'])->name('edukasi.bantuan-darurat');
 Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->middleware(['auth', 'verified'])->name('edukasi.show');
+Route::get('/edukasi/{slug}/boleh-tidak-boleh', function ($slug) {
+    $disaster = \App\Models\Disaster::where('slug', $slug)->firstOrFail();
+    return view('edukasi.boleh-tidak-boleh', compact('disaster'));
+})->middleware(['auth', 'verified'])->name('edukasi.boleh-tidak-boleh');
 
 Route::get('/cek-kondisi', [CekKondisiController::class, 'index'])->middleware(['auth', 'verified'])->name('cek-kondisi');
 Route::post('/cek-kondisi/store', [CekKondisiController::class, 'store'])->middleware(['auth', 'verified'])->name('cek-kondisi.store');
@@ -75,5 +97,12 @@ Route::post('/tas-siaga/update', [TasSiagaController::class, 'update'])->middlew
 Route::get('/perawat/antrean', [PerawatController::class, 'antrean'])->middleware(['auth', 'verified'])->name('perawat.antrean');
 Route::get('/perawat/chat/{id}', [PerawatController::class, 'chat'])->middleware(['auth', 'verified'])->name('perawat.chat');
 Route::post('/perawat/chat/{id}/finish', [PerawatController::class, 'finish'])->middleware(['auth', 'verified'])->name('perawat.finish');
+Route::get('/perawat/riwayat', [PerawatController::class, 'riwayat'])->middleware(['auth', 'verified'])->name('perawat.riwayat');
 
+Route::get('/lainnya', [App\Http\Controllers\LainnyaController::class, 'index'])->middleware(['auth', 'verified'])->name('lainnya.index');
+Route::get('/lainnya/kartu-darurat', [App\Http\Controllers\LainnyaController::class, 'kartuDarurat'])->middleware(['auth', 'verified'])->name('lainnya.kartu-darurat');
+Route::get('/lainnya/kontak-darurat', [App\Http\Controllers\LainnyaController::class, 'kontakDarurat'])->middleware(['auth', 'verified'])->name('lainnya.kontak-darurat');
+Route::get('/lainnya/panduan-evakuasi', [App\Http\Controllers\LainnyaController::class, 'panduanEvakuasi'])->middleware(['auth', 'verified'])->name('lainnya.panduan-evakuasi');
+Route::get('/lainnya/tentang', [App\Http\Controllers\LainnyaController::class, 'tentang'])->middleware(['auth', 'verified'])->name('lainnya.tentang');
+Route::get('/lainnya/faq', [App\Http\Controllers\LainnyaController::class, 'faq'])->middleware(['auth', 'verified'])->name('lainnya.faq');
 require __DIR__.'/auth.php';

@@ -19,8 +19,7 @@
     <body class="font-sans antialiased bg-[#f8fafc] text-sigala-dark">
         
         <div class="flex h-screen overflow-hidden">
-            
-            <!-- SIDEBAR (Hanya Muncul di Laptop) -->
+
             <aside class="hidden md:flex flex-col w-72 bg-white border-r border-gray-100 h-full shrink-0 z-20 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
                 <div class="flex items-center gap-3 px-8 py-8 border-b border-gray-50">
                     <div class="w-10 h-10 bg-gradient-to-br from-sigala-blue to-blue-500 rounded-xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-blue-200/50">S</div>
@@ -28,10 +27,7 @@
                 </div>
 
                 <nav class="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto">
-                    
-                    {{-- ============================== --}}
-                    {{-- MENU UNTUK PENGGUNA (Masyarakat) --}}
-                    {{-- ============================== --}}
+
                     @if(Auth::user()->role === 'pengguna')
                         <p class="px-4 text-[11px] font-extrabold text-gray-400 mb-4 uppercase tracking-widest">Menu Utama</p>
                         
@@ -61,25 +57,20 @@
                         </a>
                     @endif
 
-                    {{-- ============================== --}}
-                    {{-- MENU UNTUK PERAWAT --}}
-                    {{-- ============================== --}}
                     @if(Auth::user()->role === 'perawat')
                         <p class="px-4 text-[11px] font-extrabold text-gray-400 mb-4 uppercase tracking-widest">Menu Perawat</p>
                         
-                        <a href="#" class="flex items-center px-4 py-3 rounded-xl bg-blue-50 text-sigala-blue font-bold">
+                        <a href="{{ route('perawat.antrean') }}" class="flex items-center px-4 py-3 rounded-xl {{ request()->routeIs('perawat.antrean') ? 'bg-blue-50 text-sigala-blue font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-sigala-dark' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                             <span class="font-bold text-sm">Antrean Konsultasi</span>
                         </a>
-                        <a href="{{ route('perawat.antrean') }}" class="flex items-center px-4 py-3 rounded-xl {{ request()->routeIs('perawat.antrean') ? 'bg-blue-50 text-sigala-blue font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-sigala-dark' }}">
+                        <a href="{{ route('perawat.riwayat') }}" class="flex items-center px-4 py-3 rounded-xl {{ request()->routeIs('perawat.riwayat') ? 'bg-blue-50 text-sigala-blue font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-sigala-dark' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <span class="font-bold text-sm">Riwayat Pasien</span>
                         </a>
                     @endif
 
-                    {{-- ============================== --}}
-                    {{-- MENU UNTUK ADMIN --}}
-                    {{-- ============================== --}}
+
                     @if(Auth::user()->role === 'admin')
                         <p class="px-4 text-[11px] font-extrabold text-gray-400 mb-4 uppercase tracking-widest">Menu Admin</p>
                         
@@ -102,7 +93,6 @@
 
             <div class="flex-1 flex flex-col h-full overflow-hidden relative">
                 
-                <!-- HEADER ATAS -->
                 <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 h-20 flex items-center justify-between px-4 md:px-8 shrink-0 z-30 sticky top-0">
                     <div class="flex items-center gap-2 md:hidden">
                         <div class="w-8 h-8 bg-sigala-blue rounded-lg flex items-center justify-center text-white font-extrabold text-sm">S</div>
@@ -121,9 +111,13 @@
                                     <p class="text-sm font-extrabold text-sigala-dark leading-tight">{{ Auth::user()->name }}</p>
                                     <p class="text-[11px] font-medium text-gray-500">{{ Auth::user()->email }}</p>
                                 </div>
-                                <div class="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-sigala-blue font-extrabold border-2 border-white shadow-sm">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
-                                </div>
+                                @if(Auth::user()->foto_profil)
+                                    <img src="{{ Storage::url(Auth::user()->foto_profil) }}" alt="Foto" class="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover border-2 border-white shadow-sm">
+                                @else
+                                    <div class="w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center text-sigala-blue font-extrabold border-2 border-white shadow-sm">
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    </div>
+                                @endif
                             </button>
 
                             <div x-show="open" @click.away="open = false" x-transition class="absolute top-12 right-0 w-56 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50">
@@ -138,14 +132,13 @@
                     </div>
                 </header>
 
-                <!-- KONTEN UTAMA -->
+
                 <main class="flex-1 overflow-y-auto p-4 md:p-10 pb-24 md:pb-10 relative bg-[#f8fafc]">
                     <div class="max-w-6xl mx-auto">
                         {{ $slot }}
                     </div>
                 </main>
 
-                <!-- BOTTOM NAVIGATION (Hanya Muncul di HP) -->
                 <nav class="md:hidden absolute bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 px-1 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-40">
                     <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center w-full h-full {{ request()->routeIs('dashboard') ? 'text-sigala-blue' : 'text-gray-400' }}">
                         <svg class="w-5 h-5 mb-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Consultation;
 use App\Models\ConsultationMessage;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class KonsultasiController extends Controller
 {
@@ -60,13 +61,20 @@ class KonsultasiController extends Controller
             'message' => $request->keluhan
         ]);
 
+        $this->kirimAutoReply($consultation, $request->keluhan);
+
         return response()->json(['success' => true, 'id' => $consultation->id]);
     }
 
     public function showChat($id)
     {
         $chat = Consultation::with('messages', 'nurse')->findOrFail($id);
-        return view('konsultasi.chat', compact('chat'));
+        
+        $jamSekarang = \Carbon\Carbon::now()->hour;
+        $isJamKerja = ($jamSekarang >= 8 && $jamSekarang < 17);
+        $isOffline = !$isJamKerja && $chat->status === 'menunggu';
+
+        return view('konsultasi.chat', compact('chat', 'isOffline'));
     }
 
     public function getMessages($id)
@@ -91,6 +99,8 @@ class KonsultasiController extends Controller
 
         if (Auth::user()->role === 'perawat' && $consultation->status === 'menunggu') {
             $consultation->update(['status' => 'berlangsung', 'nurse_id' => Auth::id()]);
+        } elseif (Auth::user()->role === 'pengguna') {
+            $this->kirimAutoReply($consultation, $request->message);
         }
 
         return response()->json(['success' => true]);
@@ -116,5 +126,37 @@ class KonsultasiController extends Controller
             ->latest()
             ->get();
         return view('konsultasi.riwayat', compact('riwayat'));
+    }
+
+            private function kirimAutoReply($consultation, $pesan)
+    {
+        $jamSekarang = \Carbon\Carbon::now()->hour;
+        $isJamKerja = ($jamSekarang >= 8 && $jamSekarang < 17);
+
+        $pesanLower = strtolower($pesan);
+        $kataDarurat = ['sesak napas', 'pendarahan', 'pingsan', 'nyeri dada', 'kejang', 'tidak sadar'];
+        $isDarurat = false;
+        foreach ($kataDarurat as $kata) {
+            if (str_contains($pesanLower, $kata)) {
+                $isDarurat = true;
+                break;
+            }
+        }
+
+        if (!$isJamKerja && $consultation->status === 'menunggu') {
+            ConsultationMessage::create([
+                'consultation_id' => $consultation->id,
+                'sender_id' => 1,
+                'message' => 'Halo, perawat kami sedang offline (Jam Operasional: 08:00 - 17:00). Pesan Anda sudah masuk antrean dan akan dibalas pada jam kerja berikutnya.'
+            ]);
+        }
+
+        if ($isDarurat) {
+            ConsultationMessage::create([
+                'consultation_id' => $consultation->id,
+                'sender_id' => 1,
+                'message' => '⚠️ PERINGATAN DARURAT: Berdasarkan pesan Anda, segera hubungi 119 atau datang ke IGD fasilitas kesehatan terdekat. Jangan menunggu balasan perawat. Klik tombol darurat di bawah.'
+            ]);
+        }
     }
 }

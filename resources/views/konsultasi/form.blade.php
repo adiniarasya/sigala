@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-2xl mx-auto w-full" x-data="konsultasiForm('{{ $jenis }}')">
+    <div class="max-w-2xl mx-auto w-full" x-data="konsultasiForm('{{ $jenis }}', '{{ Auth::user()->usia }}', '{{ Auth::user()->gender }}', '{{ Auth::user()->whatsapp }}')">
         
         <div class="mb-6 flex items-center">
             <button x-show="step > 1" @click="step--" class="text-gray-500 mr-4 bg-white p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
@@ -92,6 +92,11 @@
                 </div>
             </div>
 
+            <div class="flex items-center mb-8">
+                <input type="checkbox" x-model="simpanData" id="simpan" class="rounded border-gray-300 text-sigala-blue focus:ring-sigala-blue">
+                <label for="simpan" class="ml-2 text-xs font-semibold text-gray-600">Simpan data untuk konsultasi berikutnya.</label>
+            </div>
+
             <div class="flex gap-3">
                 <button @click="step--" class="w-1/3 py-4 border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition">Kembali</button>
                 <button @click="if(nama && usia && gender && whatsapp) step = 3" :disabled="!nama || !usia || !gender || !whatsapp" :class="(!nama || !usia || !gender || !whatsapp) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'" class="w-2/3 py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md transition-all flex justify-center items-center">
@@ -150,7 +155,7 @@
     </div>
 
     <script>
-        function konsultasiForm(jenisAwal) {
+        function konsultasiForm(jenisAwal, usiaAwal, genderAwal, whatsappAwal) {
             let gejalaDefault = [];
             let placeholderDefault = '';
 
@@ -190,9 +195,10 @@
                 keluhan: '',
                 gejalaDipilih: [],
                 nama: '{{ Auth::user()->name }}',
-                usia: '',
-                gender: '',
-                whatsapp: '',
+                usia: usiaAwal,
+                gender: genderAwal,
+                whatsapp: whatsappAwal,
+                simpanData: false,
                 daftarGejala: gejalaDefault,
                 placeholderTeks: placeholderDefault,
                 
@@ -205,6 +211,22 @@
                 },
                 kirimKonsultasi() {
                     this.loading = true;
+                    
+                    if (this.simpanData) {
+                        fetch('{{ route('profil.update') }}', {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                usia: this.usia,
+                                gender: this.gender,
+                                whatsapp: this.whatsapp
+                            })
+                        });
+                    }
+
                     let fullKeluhan = this.keluhan + (this.gejalaDipilih.length > 0 ? ' | Gejala: ' + this.gejalaDipilih.join(', ') : '');
                     
                     fetch('{{ route('konsultasi.start') }}', {

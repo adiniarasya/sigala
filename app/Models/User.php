@@ -22,6 +22,18 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'usia',
+        'gender',
+        'whatsapp',
+        'alamat',
+        'golongan darah',
+        'tinggi',
+        'berat',
+        'riwayat_penyakit',
+        'alergi',
+        'obat_rutin',
+        'kelompok_risiko',
+        'foto_profil',
     ];
 
     /**

@@ -20,11 +20,12 @@
                     @foreach($antrean as $chat)
                     <div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-gray-50/50 transition">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center font-bold text-lg mr-4">
+                            <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center font-extrabold text-xl mr-4 shadow-sm border-2 border-white">
                                 {{ substr($chat->user->name, 0, 1) }}
                             </div>
                             <div>
                                 <h3 class="font-bold text-sigala-dark">{{ $chat->user->name }}</h3>
+                                <p class="text-xs font-bold text-sigala-blue mb-1">{{ $chat->jenis }}</p>
                                 <p class="text-sm text-gray-500 line-clamp-1 max-w-md">{{ $chat->keluhan }}</p>
                                 <p class="text-xs text-gray-400 mt-1">{{ $chat->created_at->diffForHumans() }}</p>
                             </div>
