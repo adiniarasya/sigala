@@ -94,15 +94,24 @@ Route::post('/kesiapsiagaan/store', [KesiapsiagaanController::class, 'store'])->
 Route::get('/tas-siaga', [TasSiagaController::class, 'index'])->middleware(['auth', 'verified'])->name('tas-siaga');
 Route::post('/tas-siaga/update', [TasSiagaController::class, 'update'])->middleware(['auth', 'verified'])->name('tas-siaga.update');
 
-Route::get('/perawat/antrean', [PerawatController::class, 'antrean'])->middleware(['auth', 'verified'])->name('perawat.antrean');
-Route::get('/perawat/chat/{id}', [PerawatController::class, 'chat'])->middleware(['auth', 'verified'])->name('perawat.chat');
-Route::post('/perawat/chat/{id}/finish', [PerawatController::class, 'finish'])->middleware(['auth', 'verified'])->name('perawat.finish');
-Route::get('/perawat/riwayat', [PerawatController::class, 'riwayat'])->middleware(['auth', 'verified'])->name('perawat.riwayat');
+Route::middleware(['auth'])->prefix('perawat')->name('perawat.')->group(function () {
+    Route::get('/dashboard', [PerawatController::class, 'dashboard'])->name('dashboard');
+    Route::get('/antrean', [PerawatController::class, 'antrean'])->name('antrean');
+    Route::get('/riwayat', [PerawatController::class, 'riwayat'])->name('riwayat');
+    Route::get('/chat/{id}', [PerawatController::class, 'chat'])->name('chat');
+    Route::post('/chat/{id}/finish', [PerawatController::class, 'finishChat'])->name('chat.finish');
+});
 
+Route::middleware('auth')->group(function () {
+    Route::get('/konsultasi/{id}/messages', [PerawatController::class, 'getMessages']);
+    Route::post('/konsultasi/{id}/send', [PerawatController::class, 'sendMessage']);
+});
 Route::get('/lainnya', [App\Http\Controllers\LainnyaController::class, 'index'])->middleware(['auth', 'verified'])->name('lainnya.index');
 Route::get('/lainnya/kartu-darurat', [App\Http\Controllers\LainnyaController::class, 'kartuDarurat'])->middleware(['auth', 'verified'])->name('lainnya.kartu-darurat');
 Route::get('/lainnya/kontak-darurat', [App\Http\Controllers\LainnyaController::class, 'kontakDarurat'])->middleware(['auth', 'verified'])->name('lainnya.kontak-darurat');
 Route::get('/lainnya/panduan-evakuasi', [App\Http\Controllers\LainnyaController::class, 'panduanEvakuasi'])->middleware(['auth', 'verified'])->name('lainnya.panduan-evakuasi');
 Route::get('/lainnya/tentang', [App\Http\Controllers\LainnyaController::class, 'tentang'])->middleware(['auth', 'verified'])->name('lainnya.tentang');
 Route::get('/lainnya/faq', [App\Http\Controllers\LainnyaController::class, 'faq'])->middleware(['auth', 'verified'])->name('lainnya.faq');
+
+Route::post('/ai/chat', [App\Http\Controllers\AiChatController::class, 'chat'])->middleware(['auth'])->name('ai.chat');
 require __DIR__.'/auth.php';

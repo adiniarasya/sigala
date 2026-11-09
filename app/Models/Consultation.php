@@ -21,4 +21,8 @@ class Consultation extends Model
     {
         return $this->belongsTo(User::class, 'nurse_id');
     }
+        public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

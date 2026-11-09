@@ -1,5 +1,48 @@
 <x-app-layout>
-    <div class="max-w-xl mx-auto w-full relative" x-data="{ step: 1, showAiChat: false, messages: [{sender: 'ai', text: 'Halo! Saya Asisten SIGALA. Ada yang bisa saya bantu terkait edukasi bencana?'}], newMessage: '' }">
+    <div class="max-w-xl mx-auto w-full relative" x-data="{ 
+        step: 1, 
+        showAiChat: false, 
+        messages: [{sender: 'ai', text: 'Halo! Saya Asisten SIGALA. Ada yang bisa saya bantu terkait edukasi bencana?'}], 
+        newMessage: '',
+        isLoading: false,
+        kirimPesan() {
+            if (this.newMessage.trim() === '' || this.isLoading) return;
+            
+            let userMessage = this.newMessage;
+            this.messages.push({ sender: 'user', text: userMessage });
+            this.newMessage = '';
+            this.isLoading = true;
+            this.messages.push({ sender: 'ai', text: 'Sedang mengetik...' });
+
+            fetch('{{ route('ai.chat') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ message: userMessage })
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.messages.pop();
+                this.messages.push({ sender: 'ai', text: data.reply });
+                this.isLoading = false;
+                this.scrollToBottom();
+            })
+            .catch(() => {
+                this.messages.pop();
+                this.messages.push({ sender: 'ai', text: 'Maaf, terjadi kesalahan koneksi.' });
+                this.isLoading = false;
+                this.scrollToBottom();
+            });
+        },
+        scrollToBottom() {
+            setTimeout(() => {
+                const container = document.getElementById('ai-chat-container');
+                if (container) container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+    }">
         
         <div x-show="step === 1" x-transition class="flex flex-col min-h-[85vh] justify-center text-center">
             <div class="w-full h-64 bg-blue-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden border border-blue-100">
@@ -117,9 +160,9 @@
                 </div>
 
                 <div class="p-4 bg-white border-t border-gray-100 shrink-0">
-                    <form @submit.prevent="if(newMessage.trim() !== '') { messages.push({sender: 'user', text: newMessage}); newMessage = ''; setTimeout(() => { messages.push({sender: 'ai', text: 'Maaf, saya masih dalam tahap pengembangan. Fitur AI akan segera hadir!'}); }, 1000); }" class="flex gap-2">
+                    <form @submit.prevent="kirimPesan()" class="flex gap-2">
                         <input type="text" x-model="newMessage" placeholder="Tanya sesuatu..." class="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-sigala-blue bg-gray-50">
-                        <button type="submit" class="px-6 py-3 bg-sigala-blue text-white font-bold rounded-xl hover:bg-blue-700 transition">Kirim</button>
+                        <button type="submit" :disabled="isLoading" class="px-6 py-3 bg-sigala-blue text-white font-bold rounded-xl hover:bg-blue-700 transition disabled:opacity-50">Kirim</button>
                     </form>
                 </div>
             </div>
@@ -127,3 +170,27 @@
 
     </div>
 </x-app-layout>
+
+<style>
+    .format-ai p {
+        margin-bottom: 8px;
+        line-height: 1.5;
+    }
+    .format-ai p:last-child {
+        margin-bottom: 0;
+    }
+    .format-ai strong {
+        font-weight: bold;
+        color: #1e3a8a;
+    }
+    .format-ai ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin-bottom: 8px;
+    }
+    .format-ai ol {
+        list-style-type: decimal;
+        padding-left: 20px;
+        margin-bottom: 8px;
+    }
+</style>

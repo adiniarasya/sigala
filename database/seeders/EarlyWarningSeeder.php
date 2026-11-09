@@ -33,4 +33,4 @@ class EarlyWarningSeeder extends Seeder
             'sumber' => 'BMKG',
         ]);
     }
-}
+}   

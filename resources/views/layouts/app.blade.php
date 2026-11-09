@@ -15,6 +15,9 @@
         <link rel="apple-touch-icon" href="/icon-192x192.png">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        
+ <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     </head>
     <body class="font-sans antialiased bg-[#f8fafc] text-sigala-dark">
         
@@ -60,6 +63,11 @@
                     @if(Auth::user()->role === 'perawat')
                         <p class="px-4 text-[11px] font-extrabold text-gray-400 mb-4 uppercase tracking-widest">Menu Perawat</p>
                         
+                        <a href="{{ route('perawat.dashboard') }}" class="flex items-center px-4 py-3 rounded-xl {{ request()->routeIs('perawat.dashboard') ? 'bg-blue-50 text-sigala-blue font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-sigala-dark' }}">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                            <span class="font-bold text-sm">Dashboard</span>
+                        </a>
+
                         <a href="{{ route('perawat.antrean') }}" class="flex items-center px-4 py-3 rounded-xl {{ request()->routeIs('perawat.antrean') ? 'bg-blue-50 text-sigala-blue font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-sigala-dark' }}">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
                             <span class="font-bold text-sm">Antrean Konsultasi</span>
@@ -69,7 +77,6 @@
                             <span class="font-bold text-sm">Riwayat Pasien</span>
                         </a>
                     @endif
-
 
                     @if(Auth::user()->role === 'admin')
                         <p class="px-4 text-[11px] font-extrabold text-gray-400 mb-4 uppercase tracking-widest">Menu Admin</p>
