@@ -18,8 +18,19 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $user = \Illuminate\Support\Facades\Auth::user();
-    $skorTerbaru = \App\Models\PreparednessScore::where('user_id', $user->id)->first();
     
+    if ($user->role === 'perawat') {
+        return redirect()->route('perawat.dashboard');
+    } 
+    
+    if ($user->role === 'admin') {
+        $totalUser = \App\Models\User::count();
+        $totalPengguna = \App\Models\User::where('role', 'pengguna')->count();
+        $totalPerawat = \App\Models\User::where('role', 'perawat')->count();
+        return view('dashboard-admin', compact('totalUser', 'totalPengguna', 'totalPerawat'));
+    }
+
+    $skorTerbaru = \App\Models\PreparednessScore::where('user_id', $user->id)->first();
     $gempaBmkg = app(\App\Http\Controllers\BmkgController::class)->getGempaTerkini();
     
     $peringatanLokal = null;
@@ -28,21 +39,6 @@ Route::get('/dashboard', function () {
         $peringatanLokal = \App\Models\EarlyWarning::whereRaw('LOWER(wilayah) LIKE ?', ['%' . $alamatUser . '%'])
             ->latest()
             ->first();
-    }
-
-    if ($user->role === 'perawat') {
-        $antrean = [
-            (object) ['nama' => 'Supardi', 'keluhan' => 'Demam 3 hari', 'waktu' => '09:15'],
-            (object) ['nama' => 'Siti Aminah', 'keluhan' => 'Sesak napas', 'waktu' => '10:30'],
-        ];
-        return view('dashboard-perawat', compact('antrean'));
-    } 
-    
-    if ($user->role === 'admin') {
-        $totalUser = \App\Models\User::count();
-        $totalPengguna = \App\Models\User::where('role', 'pengguna')->count();
-        $totalPerawat = \App\Models\User::where('role', 'perawat')->count();
-        return view('dashboard-admin', compact('totalUser', 'totalPengguna', 'totalPerawat'));
     }
 
     return view('dashboard', compact('skorTerbaru', 'gempaBmkg', 'peringatanLokal'));

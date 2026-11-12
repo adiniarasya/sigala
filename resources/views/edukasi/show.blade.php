@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-xl mx-auto w-full" x-data="{ tab: 'informasi' }">
+    <div class="max-w-xl mx-auto w-full pb-24" x-data="{ tab: 'informasi' }">
         
         <div class="mb-6 flex items-center">
             <a href="{{ route('edukasi.index') }}" class="text-gray-500 mr-4 bg-white p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
@@ -8,12 +8,11 @@
             <h1 class="text-xl font-bold text-sigala-dark">Detail Edukasi</h1>
         </div>
 
-        <div class="w-full h-56 bg-{{ $disaster->warna }}-50 rounded-3xl mb-6 flex items-center justify-center relative overflow-hidden border border-{{ $disaster->warna }}-100">
-            <div class="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-            <div class="text-8xl relative z-10">{{ $disaster->ikon }}</div>
+        <div class="w-full h-48 sm:h-56 bg-{{ $disaster->warna }}-50 rounded-3xl mb-6 flex items-center justify-center relative overflow-hidden border border-{{ $disaster->warna }}-100">
+            <img src="{{ asset('images/' . str_replace('-bumi', '', $disaster->slug) . '.png') }}" alt="{{ $disaster->nama }}" class="w-full h-full object-cover relative z-10">
         </div>
 
-        <h2 class="text-3xl font-extrabold text-sigala-dark mb-2 capitalize">{{ $disaster->nama }}</h2>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-sigala-dark mb-2 capitalize">{{ $disaster->nama }}</h2>
         <p class="text-sm text-gray-500 mb-6">Kenali risiko, pahami langkahnya, selamatkan diri.</p>
 
         <div class="flex bg-gray-100 p-1.5 rounded-2xl mb-6">
@@ -22,7 +21,7 @@
             <button @click="tab = 'video'" :class="tab === 'video' ? 'bg-sigala-blue text-white shadow-sm' : 'text-gray-500 hover:text-sigala-dark'" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition">Video</button>
         </div>
 
-        <div x-show="tab === 'informasi'" x-transition class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm mb-8">
+        <div x-show="tab === 'informasi'" x-transition class="bg-white border border-gray-100 rounded-3xl p-5 sm:p-6 shadow-sm mb-8">
             <h3 class="text-lg font-bold text-sigala-blue mb-4">Apa itu {{ $disaster->nama }}?</h3>
             <p class="text-sm text-gray-600 leading-relaxed mb-6">
                 @if($disaster->slug == 'gempa-bumi')
@@ -55,14 +54,14 @@
             </div>
         </div>
 
-        <div x-show="tab === 'tips'" x-transition class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm mb-8">
+        <div x-show="tab === 'tips'" x-transition class="bg-white border border-gray-100 rounded-3xl p-5 sm:p-6 shadow-sm mb-8">
             <h3 class="text-lg font-bold text-sigala-blue mb-4">Tips Keselamatan</h3>
-            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-6">
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 sm:p-6">
                 <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ $disaster->tips }}</p>
             </div>
         </div>
 
-                      <div x-show="tab === 'video'" x-transition class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm mb-8">
+        <div x-show="tab === 'video'" x-transition class="bg-white border border-gray-100 rounded-3xl p-5 sm:p-6 shadow-sm mb-8">
             <h3 class="text-lg font-bold text-sigala-blue mb-4">Video Edukasi</h3>
             
             @php

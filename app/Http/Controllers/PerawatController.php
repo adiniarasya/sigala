@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class PerawatController extends Controller
 {
-public function dashboard()
+    public function dashboard()
     {
         $totalAntrean = Consultation::where('status', 'menunggu')->count();
         $sedangDitangani = Consultation::where('status', 'berlangsung')->count();
@@ -55,13 +55,9 @@ public function dashboard()
             ]);
         }
 
-        return view('perawat.chat', compact('consultation'));
-    }
-
-    public function getMessages($id)
-    {
         $chats = Chat::where('consultation_id', $id)->orderBy('created_at', 'asc')->get();
-        return response()->json($chats);
+
+        return view('perawat.chat', compact('consultation', 'chats'));
     }
 
     public function sendMessage(Request $request, $id)
@@ -83,5 +79,11 @@ public function dashboard()
         $consultation->update(['status' => 'selesai']);
         
         return response()->json(['status' => 'success']);
+    }
+
+    public function getMessages($id)
+    {
+        $chats = Chat::where('consultation_id', $id)->orderBy('created_at', 'asc')->get();
+        return response()->json($chats);
     }
 }

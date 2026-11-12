@@ -1,16 +1,18 @@
 <x-app-layout>
-    <div class="max-w-xl mx-auto w-full" x-data="tasSiagaApp({{ $userItems->toJson() }})" x-init="init()">
+    <div class="max-w-xl mx-auto w-full pb-24" x-data="tasSiagaApp({{ $userItems->toJson() }})" x-init="init()">
         
-        <div x-show="step === 1" x-transition class="flex flex-col min-h-[85vh]">
+        <!-- STEP 1: HALAMAN DEPAN -->
+        <div x-show="step === 1" x-transition class="flex flex-col">
             <div class="flex items-center mb-6">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </a>
                 <h1 class="text-xl font-bold text-sigala-dark ml-4">Tas Siaga</h1>
             </div>
 
-            <div class="w-full h-56 bg-blue-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden border border-blue-100">
-                <div class="text-8xl relative z-10">🎒</div>
+            <!-- GAMBAR TAS SIAGA -->
+            <div class="w-full h-56 sm:h-72 bg-blue-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden border border-blue-100 p-6">
+                <img src="{{ asset('images/tas-siaga.png') }}" alt="Ilustrasi Tas Siaga" class="w-full h-full object-contain relative z-10">
             </div>
 
             <h2 class="text-2xl font-extrabold text-sigala-blue mb-4 leading-tight">Siapkan Tas Siaga untuk Keluarga Anda</h2>
@@ -18,29 +20,30 @@
             
             <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-8 space-y-4">
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm">1</div>
+                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm shrink-0">1</div>
                     <p class="text-sm font-bold text-sigala-dark">Siap dalam keadaan darurat</p>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm">2</div>
+                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm shrink-0">2</div>
                     <p class="text-sm font-bold text-sigala-dark">Melindungi diri dari keluarga</p>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm">3</div>
+                    <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 font-bold text-sm shrink-0">3</div>
                     <p class="text-sm font-bold text-sigala-dark">Mempercepat proses evakuasi</p>
                 </div>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-4">
                 <button @click="step = 2" class="w-full py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition flex justify-center items-center">
                     Mulai Cek <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </div>
         </div>
 
-        <div x-show="step === 2" x-transition class="flex flex-col min-h-[85vh]">
+        <!-- STEP 2: CHECKLIST BARANG -->
+        <div x-show="step === 2" x-transition class="flex flex-col">
             <div class="flex items-center mb-6">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </a>
                 <h1 class="text-xl font-bold text-sigala-dark ml-4">Tas Siaga</h1>
@@ -52,36 +55,37 @@
                 <template x-for="(item, index) in daftarBarang" :key="index">
                     <div @click="toggleItem(index)" class="flex items-center p-4 bg-white border rounded-2xl cursor-pointer transition-all shadow-sm" :class="item.checked ? 'border-teal-200 bg-teal-50/30' : 'border-gray-100'">
                         
-                        <div class="w-6 h-6 rounded border-2 flex items-center justify-center mr-4 transition-colors" :class="item.checked ? 'bg-teal-500 border-teal-500' : 'border-gray-300'">
+                        <div class="w-6 h-6 rounded border-2 flex items-center justify-center mr-4 transition-colors shrink-0" :class="item.checked ? 'bg-teal-500 border-teal-500' : 'border-gray-300'">
                             <svg x-show="item.checked" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         </div>
 
-                        <div class="text-2xl mr-4" x-text="item.ikon"></div>
+                        <div class="text-2xl mr-4 shrink-0" x-text="item.ikon"></div>
                         
-                        <div class="flex-1">
-                            <h3 class="text-sm font-bold text-sigala-dark" x-text="item.nama"></h3>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-sm font-bold text-sigala-dark truncate" x-text="item.nama"></h3>
                         </div>
                     </div>
                 </template>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-4">
                 <button @click="step = 3; simpanData()" class="w-full py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition">
                     Lanjutkan
                 </button>
             </div>
         </div>
 
-        <div x-show="step === 3" x-transition class="flex flex-col min-h-[85vh]">
+        <!-- STEP 3: HASIL SKOR -->
+        <div x-show="step === 3" x-transition class="flex flex-col">
             <div class="flex items-center mb-6">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </a>
                 <h1 class="text-xl font-bold text-sigala-dark ml-4">Hasil Pemeriksaan</h1>
             </div>
 
-            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm mb-6 flex items-center">
-                <div class="relative w-24 h-24 mr-6 shrink-0">
+            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm mb-6 flex flex-col sm:flex-row items-center gap-6">
+                <div class="relative w-24 h-24 shrink-0">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                         <path class="text-blue-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" />
                         <path class="text-sigala-blue transition-all duration-1000 ease-out" :stroke-dasharray="`${(skor / 9) * 100}, 100`" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" />
@@ -91,7 +95,7 @@
                         <span class="text-[10px] text-gray-500">Item terpenuhi</span>
                     </div>
                 </div>
-                <div>
+                <div class="text-center sm:text-left">
                     <h2 class="text-xl font-extrabold text-sigala-dark mb-1" x-text="statusTeks"></h2>
                     <p class="text-xs text-gray-500 leading-relaxed" x-text="statusDeskripsi"></p>
                 </div>
@@ -117,16 +121,17 @@
                 <p class="text-xs text-sigala-dark leading-relaxed">Lengkapi kekurangan yang ada agar tas siaga Anda lebih optimal.</p>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-4">
                 <button @click="step = 4" class="w-full py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition">
                     Lihat Detail
                 </button>
             </div>
         </div>
 
-        <div x-show="step === 4" x-transition class="flex flex-col min-h-[85vh]">
+        <!-- STEP 4: REKOMENDASI BARANG -->
+        <div x-show="step === 4" x-transition class="flex flex-col">
             <div class="flex items-center mb-6">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </a>
                 <h1 class="text-xl font-bold text-sigala-dark ml-4">Rekomendasi</h1>
@@ -141,21 +146,21 @@
 
             <div class="space-y-4 mb-8">
                 <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex items-center">
-                    <div class="text-4xl mr-4">🔦</div>
+                    <div class="text-4xl mr-4 shrink-0">🔦</div>
                     <div>
                         <h3 class="font-bold text-sigala-dark text-sm">Senter</h3>
                         <p class="text-xs text-gray-500 mt-1">Pilih Senter yang tahan lama dan menggunakan baterai atau rechargeable.</p>
                     </div>
                 </div>
                 <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex items-center">
-                    <div class="text-4xl mr-4">🔋</div>
+                    <div class="text-4xl mr-4 shrink-0">🔋</div>
                     <div>
                         <h3 class="font-bold text-sigala-dark text-sm">Power Bank</h3>
                         <p class="text-xs text-gray-500 mt-1">Minimal 10.000 mAh agar bisa mengisi daya beberapa perangkat.</p>
                     </div>
                 </div>
                 <div class="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex items-center">
-                    <div class="text-4xl mr-4">📄</div>
+                    <div class="text-4xl mr-4 shrink-0">📄</div>
                     <div>
                         <h3 class="font-bold text-sigala-dark text-sm">Dokumen Penting</h3>
                         <p class="text-xs text-gray-500 mt-1">Simpan dalam plastik kedap air, berisi KTP, KK, BPJS, dan dokumen penting lainnya.</p>
@@ -163,23 +168,24 @@
                 </div>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-4">
                 <button @click="step = 5" class="w-full py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition">
                     Lanjutkan
                 </button>
             </div>
         </div>
 
-        <div x-show="step === 5" x-transition class="flex flex-col min-h-[85vh]">
+        <!-- STEP 5: TIPS TAMBAHAN -->
+        <div x-show="step === 5" x-transition class="flex flex-col">
             <div class="flex items-center mb-6">
-                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm">
+                <a href="{{ route('dashboard') }}" class="text-gray-500 bg-white p-2.5 rounded-xl border border-gray-200 shadow-sm shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </a>
                 <h1 class="text-xl font-bold text-sigala-dark ml-4">Tips Tambahan</h1>
             </div>
 
-            <div class="w-full h-48 bg-blue-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden">
-                <div class="text-8xl">🎒</div>
+            <div class="w-full h-48 bg-blue-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden p-6">
+                <img src="{{ asset('images/tas-siaga.png') }}" alt="Ilustrasi Tas Siaga" class="w-full h-full object-contain">
                 <div class="absolute top-4 right-4 text-3xl">💡</div>
             </div>
 
@@ -203,7 +209,7 @@
                 </div>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-4">
                 <a href="{{ route('dashboard') }}" class="block w-full py-4 bg-sigala-blue text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition text-center">
                     Selesai
                 </a>

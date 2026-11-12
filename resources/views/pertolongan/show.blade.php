@@ -1,16 +1,16 @@
 <x-app-layout>
-    <div class="max-w-xl mx-auto w-full">
+    <div class="max-w-xl mx-auto w-full pb-24">
         
         <div class="mb-6 flex items-center">
-            <a href="{{ route('pertolongan.index') }}" class="text-gray-500 mr-4 bg-white p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm">
+            <a href="{{ route('pertolongan.index') }}" class="text-gray-500 mr-4 bg-white p-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition shadow-sm shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </a>
-            <h1 class="text-xl font-bold text-sigala-blue capitalize">{{ $topic->nama }}</h1>
+            <h1 class="text-xl font-bold text-sigala-blue capitalize truncate">{{ $topic->nama }}</h1>
         </div>
 
-        <div class="w-full h-64 bg-{{ $topic->warna }}-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden border border-{{ $topic->warna }}-100">
+        <div class="w-full h-56 sm:h-64 bg-{{ $topic->warna }}-50 rounded-3xl mb-8 flex items-center justify-center relative overflow-hidden border border-{{ $topic->warna }}-100 p-4">
             @if(file_exists(public_path('images/' . $topic->slug . '.png')))
-                <img src="{{ asset('images/' . $topic->slug . '.png') }}" alt="{{ $topic->nama }}" class="w-full h-full object-contain relative z-10 p-4">
+                <img src="{{ asset('images/' . $topic->slug . '.png') }}" alt="{{ $topic->nama }}" class="w-full h-full object-contain relative z-10">
             @else
                 <div class="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 <div class="text-9xl relative z-10">{{ $topic->ikon }}</div>
@@ -48,7 +48,7 @@
 
         <h2 class="text-lg font-extrabold text-sigala-blue mb-4">Langkah-langkah pertolongan pertama</h2>
         
-        <div class="bg-sigala-light rounded-3xl p-6 space-y-6 mb-8">
+        <div class="bg-sigala-light rounded-3xl p-5 sm:p-6 space-y-6 mb-8">
             @foreach($topic->steps as $step)
             <div class="flex items-start">
                 <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center font-bold text-sm mr-4 shrink-0 shadow-sm">{{ $step->urutan }}</div>
@@ -59,7 +59,7 @@
             @endforeach
         </div>
 
-        <div class="bg-sigala-light border border-blue-100 rounded-2xl p-6 flex items-start mb-8">
+        <div class="bg-sigala-light border border-blue-100 rounded-2xl p-5 sm:p-6 flex items-start mb-8">
             <div class="w-8 h-8 bg-sigala-blue text-white rounded-full flex items-center justify-center mr-4 shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             </div>
