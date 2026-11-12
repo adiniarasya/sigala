@@ -48,12 +48,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
 });
 
 Route::get('/profil', [ProfilController::class, 'index'])->middleware(['auth', 'verified'])->name('profil');
 Route::patch('/profil/update', [App\Http\Controllers\ProfilController::class, 'update'])->middleware(['auth'])->name('profil.update');
 Route::get('/profil/kesehatan', [App\Http\Controllers\ProfilController::class, 'kesehatan'])->middleware(['auth'])->name('profil.kesehatan');
 Route::patch('/profil/kesehatan/update', [App\Http\Controllers\ProfilController::class, 'updateKesehatan'])->middleware(['auth'])->name('profil.kesehatan.update');
+    Route::get('/profil/kartu-darurat', function () { return view('profil.kartu-darurat'); })->middleware(['auth'])->name('profil.kartu-darurat');
+    Route::get('/profil/notifikasi', function () { return view('profil.notifikasi'); })->middleware(['auth'])->name('profil.notifikasi');
 Route::get('/profil/bantuan', function () { return view('profil.bantuan'); })->middleware(['auth'])->name('profil.bantuan');
 Route::get('/profil/privasi', function () { return view('profil.privasi'); })->middleware(['auth'])->name('profil.privasi');
 

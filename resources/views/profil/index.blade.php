@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-3xl mx-auto w-full">
+    <div class="max-w-3xl mx-auto w-full pb-24">
         
         <div class="mb-8">
             <h1 class="text-3xl font-extrabold text-sigala-dark mb-2 tracking-tight">Profil & Pengaturan</h1>
@@ -7,7 +7,7 @@
         </div>
 
         <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm mb-6">
-            <div class="bg-gradient-to-r from-blue-50 to-white p-8 flex items-center gap-6 border-b border-gray-100">
+            <div class="bg-gradient-to-r from-blue-50 to-white p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 border-b border-gray-100">
                 <div class="relative shrink-0 w-24 h-24">
                     @if(Auth::user()->foto_profil)
                         <img src="{{ Storage::url(Auth::user()->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover border-4 border-white shadow-lg">
@@ -26,7 +26,7 @@
                         <input type="file" id="foto_profil" name="foto_profil" class="hidden" onchange="this.form.submit()">
                     </form>
                 </div>
-                <div>
+                <div class="text-center sm:text-left">
                     <h2 class="text-2xl font-extrabold text-sigala-dark">{{ Auth::user()->name }}</h2>
                     <p class="text-sm text-gray-500 mb-2">{{ Auth::user()->email }}</p>
                     <span class="inline-flex items-center text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-md border border-teal-100">
@@ -38,83 +38,66 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-                        <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm" x-data="{ editAlamat: false }">
+            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm" x-data="{ edit: false }">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-sigala-dark">Data Pribadi</h3>
-                    <button @click="editAlamat = !editAlamat" class="text-xs font-bold text-sigala-blue hover:underline">
-                        <span x-show="!editAlamat">Edit Alamat</span>
-                        <span x-show="editAlamat">Batal</span>
-                    </button>
+                    <button @click="edit = !edit" class="text-xs font-bold text-sigala-blue hover:underline" x-text="edit ? 'Batal' : 'Edit'"></button>
                 </div>
                 
-                <div class="space-y-4">
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">📅</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Usia</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->usia ?? 'Belum diisi' }} Tahun</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">🚻</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Jenis Kelamin</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->gender ?? 'Belum diisi' }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">📞</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Nomor WhatsApp</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->whatsapp ?? 'Belum diisi' }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start text-sm">
-                        <span class="w-8 text-gray-400">📍</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Alamat</p>
-                            <p x-show="!editAlamat" class="font-semibold text-sigala-dark">{{ Auth::user()->alamat ?? 'Belum diisi' }}</p>
-                            
-                            <form x-show="editAlamat" action="{{ route('profil.update') }}" method="POST" class="mt-2">
-                                @csrf
-                                @method('PATCH')
-                                <textarea name="alamat" rows="2" class="w-full rounded-xl border-gray-200 focus:border-sigala-blue focus:ring focus:ring-sigala-blue/20 bg-gray-50 p-2 text-sm mb-2">{{ Auth::user()->alamat }}</textarea>
-                                <button type="submit" class="px-4 py-2 bg-sigala-blue text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition">Simpan</button>
-                            </form>
-                        </div>
-                    </div>
+                <div x-show="!edit" class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">Usia</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->usia ?? 'Belum diisi' }} Tahun</span></div>
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">Jenis Kelamin</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->gender ?? 'Belum diisi' }}</span></div>
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">WhatsApp</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->whatsapp ?? 'Belum diisi' }}</span></div>
+                    <div class="flex justify-between pb-2"><span class="text-gray-500">Alamat</span> <span class="font-bold text-sigala-dark text-right max-w-[150px] truncate">{{ Auth::user()->alamat ?? 'Belum diisi' }}</span></div>
                 </div>
+
+                <form x-show="edit" action="{{ route('profil.update') }}" method="POST" class="space-y-3">
+                    @csrf @method('PATCH')
+                    <div><label class="text-xs text-gray-500">Usia</label><input type="number" name="usia" value="{{ Auth::user()->usia }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"></div>
+                    <div><label class="text-xs text-gray-500">Jenis Kelamin</label>
+                        <select name="gender" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm">
+                            <option value="Laki-laki" {{ Auth::user()->gender == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ Auth::user()->gender == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div><label class="text-xs text-gray-500">WhatsApp</label><input type="text" name="whatsapp" value="{{ Auth::user()->whatsapp }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"></div>
+                    <div><label class="text-xs text-gray-500">Alamat</label><textarea name="alamat" rows="2" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm">{{ Auth::user()->alamat }}</textarea></div>
+                    <button type="submit" class="w-full py-2 bg-sigala-blue text-white text-xs font-bold rounded-lg mt-2">Simpan Data</button>
+                </form>
             </div>
 
-            <a href="{{ route('profil.kesehatan') }}" class="block bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-md transition">
+            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm" x-data="{ edit: false }">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="font-bold text-sigala-dark">Informasi Kesehatan</h3>
-                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    <button @click="edit = !edit" class="text-xs font-bold text-sigala-blue hover:underline" x-text="edit ? 'Batal' : 'Edit'"></button>
                 </div>
-                <div class="space-y-4">
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">⚖️</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Berat & Tinggi</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->berat ?? '-' }} kg / {{ Auth::user()->tinggi ?? '-' }} cm</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">🤧</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Alergi</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->alergi ?? 'Tidak ada' }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center text-sm">
-                        <span class="w-8 text-gray-400">🏥</span>
-                        <div class="flex-1">
-                            <p class="text-xs text-gray-500">Riwayat Penyakit</p>
-                            <p class="font-semibold text-sigala-dark">{{ Auth::user()->riwayat_penyakit ?? 'Tidak ada' }}</p>
-                        </div>
-                    </div>
+                
+                <div x-show="!edit" class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">Berat / Tinggi</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->berat ?? '-' }} kg / {{ Auth::user()->tinggi ?? '-' }} cm</span></div>
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">Gol. Darah</span> <span class="font-bold text-red-500">{{ Auth::user()->golongan_darah ?? '-' }}</span></div>
+                    <div class="flex justify-between border-b border-gray-50 pb-2"><span class="text-gray-500">Alergi</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->alergi ?? 'Tidak ada' }}</span></div>
+                    <div class="flex justify-between pb-2"><span class="text-gray-500">Riwayat Penyakit</span> <span class="font-bold text-sigala-dark">{{ Auth::user()->riwayat_penyakit ?? 'Tidak ada' }}</span></div>
                 </div>
-            </a>
+
+                <form x-show="edit" action="{{ route('profil.kesehatan.update') }}" method="POST" class="space-y-3">
+                    @csrf @method('PATCH')
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="text-xs text-gray-500">Berat (kg)</label><input type="number" name="berat" value="{{ Auth::user()->berat }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"></div>
+                        <div><label class="text-xs text-gray-500">Tinggi (cm)</label><input type="number" name="tinggi" value="{{ Auth::user()->tinggi }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"></div>
+                    </div>
+                    <div><label class="text-xs text-gray-500">Golongan Darah</label>
+                        <select name="golongan_darah" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm">
+                            <option value="A" {{ Auth::user()->golongan_darah == 'A' ? 'selected' : '' }}>A</option>
+                            <option value="B" {{ Auth::user()->golongan_darah == 'B' ? 'selected' : '' }}>B</option>
+                            <option value="AB" {{ Auth::user()->golongan_darah == 'AB' ? 'selected' : '' }}>AB</option>
+                            <option value="O" {{ Auth::user()->golongan_darah == 'O' ? 'selected' : '' }}>O</option>
+                        </select>
+                    </div>
+                    <div><label class="text-xs text-gray-500">Alergi</label><input type="text" name="alergi" value="{{ Auth::user()->alergi }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Pisahkan dengan koma"></div>
+                    <div><label class="text-xs text-gray-500">Riwayat Penyakit</label><input type="text" name="riwayat_penyakit" value="{{ Auth::user()->riwayat_penyakit }}" class="w-full mt-1 px-3 py-2 rounded-lg border border-gray-200 text-sm"></div>
+                    <button type="submit" class="w-full py-2 bg-sigala-blue text-white text-xs font-bold rounded-lg mt-2">Simpan Kesehatan</button>
+                </form>
+            </div>
 
         </div>
 
@@ -140,7 +123,7 @@
         <div class="mt-6 bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
             <h3 class="font-bold text-sigala-dark mb-4">Pengaturan Aplikasi</h3>
             <div class="space-y-1">
-                <a href="#" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
+                <a href="{{ route('profil.notifikasi') }}" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition">
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
@@ -174,6 +157,19 @@
                         <div>
                             <p class="font-bold text-sm text-sigala-dark">Bantuan & FAQ</p>
                             <p class="text-xs text-gray-500">Pertanyaan yang sering diajukan</p>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+
+                <a href="{{ route('profil.kartu-darurat') }}" class="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 transition border-t border-gray-50">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path></svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-sigala-dark">Kartu Darurat</p>
+                            <p class="text-xs text-gray-500">Cetak kartu identitas kesehatan Anda</p>
                         </div>
                     </div>
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
