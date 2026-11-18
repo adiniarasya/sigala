@@ -9,8 +9,14 @@ class AdminController extends Controller
 {
     public function kelolaPengguna()
     {
-        // Mengambil semua user dari database
+
         $users = User::all();
         return view('admin.pengguna', compact('users'));
     }
+    public function pengguna()
+{
+    $pengguna = \App\Models\User::all();
+
+    return view('admin.pengguna', compact('pengguna'));
+}
 }

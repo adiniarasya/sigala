@@ -44,6 +44,9 @@ Route::get('/dashboard', function () {
     return view('dashboard', compact('skorTerbaru', 'gempaBmkg', 'peringatanLokal'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/pengguna', [AdminController::class, 'pengguna'])->name('pengguna');
+}); 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -113,4 +116,6 @@ Route::get('/lainnya/tentang', [App\Http\Controllers\LainnyaController::class, '
 Route::get('/lainnya/faq', [App\Http\Controllers\LainnyaController::class, 'faq'])->middleware(['auth', 'verified'])->name('lainnya.faq');
 
 Route::post('/ai/chat', [App\Http\Controllers\AiChatController::class, 'chat'])->middleware(['auth'])->name('ai.chat');
+
+Route::get('/offline', function () { return view('offline'); });
 require __DIR__.'/auth.php';

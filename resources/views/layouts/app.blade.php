@@ -14,7 +14,20 @@
         <meta name="theme-color" content="#1E66D0">
         <link rel="apple-touch-icon" href="/icon-192x192.png">
         <link rel="icon" type="image/png" href="{{ asset('images/logo-sigala.png') }}">
-
+            <link rel="manifest" href="/manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-[#f8fafc] text-sigala-dark">
